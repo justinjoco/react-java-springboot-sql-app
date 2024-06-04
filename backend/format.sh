@@ -1,3 +1,3 @@
 #!/bin/sh
-pylint .
-yapf -r .
+pylint --fail-under 8 -r y . 
+yapf -r --in-place .
