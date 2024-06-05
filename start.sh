@@ -5,4 +5,4 @@ cd ..
 cd backend
 sh format.sh
 cd ..
-docker compose up -d --build
+docker compose up --build
