@@ -3,7 +3,7 @@
 from flask import Flask
 from waitress import serve
 from api.route.store import store_api
-from api.model.base import db
+from api.model.db import db
 from tracing.log import logger
 
 
