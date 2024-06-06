@@ -1,29 +1,20 @@
 """app.py"""
-import logging
-import sys
 
 from flask import Flask
 from waitress import serve
-from api.route.home import home_api
-
-file_handler = logging.FileHandler(filename='tmp.log')
-stdout_handler = logging.StreamHandler(stream=sys.stdout)
-handlers = [file_handler, stdout_handler]
-
-logging.basicConfig(
-    level=logging.INFO,
-    format=
-    '[%(asctime)s] {%(filename)s:%(lineno)d} %(levelname)s - %(message)s',
-    handlers=handlers)
-
-logger = logging.getLogger(__name__)
+from api.route.store import store_api
+from api.model.base import db
+from tracing.log import logger
 
 
 def create_app():
     app = Flask(__name__)
-
+    app.config["SQLALCHEMY_DATABASE_URI"
+               ] = "postgresql://admin:password@db/shopping_store"
+    # initialize the app with the extension
+    db.init_app(app)
     ## Initialize Config
-    app.register_blueprint(home_api, url_prefix='/api')
+    app.register_blueprint(store_api, url_prefix='/api')
 
     return app
 
