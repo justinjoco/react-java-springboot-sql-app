@@ -2,7 +2,10 @@
 
 from flask import Flask
 from waitress import serve
-from api.route.store import store_api
+from api.route.common import common_api
+from api.route.customer import customer_api
+from api.route.admin import admin_api
+
 from api.model.db import db
 from tracing.log import logger
 
@@ -14,7 +17,9 @@ def create_app():
     # initialize the app with the extension
     db.init_app(app)
     ## Initialize Config
-    app.register_blueprint(store_api, url_prefix='/api')
+    app.register_blueprint(common_api)
+    app.register_blueprint(customer_api)
+    app.register_blueprint(admin_api)
 
     return app
 
