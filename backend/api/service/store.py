@@ -1,18 +1,20 @@
-from api.model.db import db
 from api.model.item import Item
 from api.model.order import Order
 from tracing.log import logger
-from sqlalchemy import select
 
 
 class StoreService:
     def get_items(self):
         logger.info("Retrieving items from DB")
-        return db.session.execute(select(Item)).scalars()
+        return Item.query.all()
+
+    def get_item(self, item_id):
+        logger.info(f"Retrieving item with id {item_id} from DB")
+        return Item.query.get(item_id)
 
     def get_orders(self):
         logger.info("Retrieving orders from DB")
-        return db.session.execute(select(Order)).scalars()
+        return Order.query.all()
 
 
 store_service = StoreService()
