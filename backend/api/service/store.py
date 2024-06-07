@@ -2,7 +2,7 @@ from api.model.item import Item
 from api.model.order import Order
 from tracing.log import logger
 from api.model.db import db
-from sqlalchemy import insert, select, update
+from sqlalchemy import insert, update
 from typing import Dict
 
 
@@ -13,7 +13,7 @@ class StoreService:
 
     def get_item(self, item_id):
         logger.info(f"Retrieving item with id {item_id} from DB")
-        return Item.query.get(item_id)
+        return Item.query.get_or_404(item_id)
 
     def get_orders(self):
         logger.info("Retrieving orders from DB")
@@ -33,23 +33,17 @@ class StoreService:
 
     def update_item(self, item_id, item_update):
         logger.info(f"Updating item with id {item_id}")
-        item: Dict[str, any] | None = Item.query.get(item_id)
-        if item is None:
-            return False
+        Item.query.get_or_404(item_id)
         update_stmt = update(Item).where(Item.id == item_id).values(
             item_update)
         db.session.execute(update_stmt)
         db.session.commit()
-        return True
 
     def delete_item(self, item_id):
         logger.info(f"Deleting item with id {item_id}")
-        item: Dict[str, any] | None = Item.query.get(item_id)
-        if item is None:
-            return False
+        item: Dict[str, any] | None = Item.query.get_or_404(item_id)
         db.session.delete(item)
         db.session.commit()
-        return True
 
     def purchase_item(self, item_id):
         logger.info("Retrieving orders from DB")

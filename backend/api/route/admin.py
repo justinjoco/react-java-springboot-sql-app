@@ -23,14 +23,12 @@ def add_items():
 def update_item(item_id):
     logger.info(f"Updating an item {item_id}")
     item_update = request.json
-    is_found = store_service.update_item(item_id, item_update)
-    return ("Item has been updated", 200) if is_found else (
-        "Item does not exist!", 404)
+    store_service.update_item(item_id, item_update)
+    return "Item has been updated", 200
 
 
 @admin_api.delete('/item/<item_id>')
 def delete_item(item_id):
     logger.info(f"Deleting an item {item_id}")
-    is_found = store_service.delete_item(item_id)
-    return ("Item has been deleted", 200) if is_found else (
-        "Item does not exist!", 404)
+    store_service.delete_item(item_id)
+    return "Item has been deleted", 200
