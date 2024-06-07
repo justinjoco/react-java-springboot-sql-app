@@ -45,12 +45,12 @@ class StoreService:
         db.session.delete(item)
         db.session.commit()
 
-    def purchase_item(self, item_id):
-        logger.info("Retrieving orders from DB")
+    def purchase_specific_item(self, item_id):
+        logger.info("Purchasing a specific item")
         return Order.query.all()
 
-    def purchase_items(self):
-        logger.info("Retrieving orders from DB")
+    def purchase_items(self, i):
+        logger.info("Purchasing multiple items")
         return Order.query.all()
 
 

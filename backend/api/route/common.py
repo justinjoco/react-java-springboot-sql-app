@@ -2,7 +2,6 @@ from flask import Blueprint, request
 from api.service.store import store_service
 from api.schema.item_response import ItemResponse
 from api.schema.order_response import OrderResponse
-from tracing.log import logger
 common_api = Blueprint('common_api', __name__)
 
 

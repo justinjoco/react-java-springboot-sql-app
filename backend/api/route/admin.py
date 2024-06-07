@@ -21,7 +21,6 @@ def add_items():
 
 @admin_api.put('/item/<item_id>')
 def update_item(item_id):
-    logger.info(f"Updating an item {item_id}")
     item_update = request.json
     store_service.update_item(item_id, item_update)
     return "Item has been updated", 200
@@ -29,6 +28,5 @@ def update_item(item_id):
 
 @admin_api.delete('/item/<item_id>')
 def delete_item(item_id):
-    logger.info(f"Deleting an item {item_id}")
     store_service.delete_item(item_id)
     return "Item has been deleted", 200
