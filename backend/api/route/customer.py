@@ -2,6 +2,10 @@ from flask import Blueprint, request
 from tracing.log import logger
 from api.service.store import store_service
 customer_api = Blueprint('customer_api', __name__)
+'''
+1. Implement these endpoints with userId as part of the request body
+(Optional) 2. Put the userId in the JWT. Validate the JWT and parse the payload for the userId
+'''
 
 
 @customer_api.post('/items/purchase')
