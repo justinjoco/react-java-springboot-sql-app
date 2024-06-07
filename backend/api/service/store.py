@@ -17,11 +17,20 @@ class StoreService:
         logger.info(f"Retrieving item with id {item_id} from DB")
         return Item.query.get_or_404(item_id)
 
-    def get_orders(self):
+    def get_all_orders(self):
         logger.info("Retrieving orders from DB")
         query = select(Order.id, Order.user_id, Order.amount_bought,
-                      Order.total_price, Order.date_created,
-                      Item.name).join(Item)
+                       Order.total_price, Order.date_created,
+                       Item.name).join(Item)
+        orders = db.session.execute(query)
+        return orders
+
+    def get_orders_by_user_id(self, user_id):
+        logger.info("Retrieving orders from DB")
+        query = select(
+            Order.id, Order.user_id, Order.amount_bought, Order.total_price,
+            Order.date_created,
+            Item.name).join(Item).where(Order.user_id == user_id)
         orders = db.session.execute(query)
         return orders
 

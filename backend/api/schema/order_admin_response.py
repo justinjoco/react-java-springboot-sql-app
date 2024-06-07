@@ -1,8 +1,8 @@
 from flask_marshmallow import Schema
-from marshmallow.fields import Str, Int, DateTime, Decimal, Dict
+from marshmallow.fields import Str, Int, DateTime, Decimal
 
 
-class OrderResponse(Schema):
+class OrderAdminResponse(Schema):
     class Meta:
         # Fields to expose
         fields = ["id", "name", "user_id", "amount_bought", "total_price",
