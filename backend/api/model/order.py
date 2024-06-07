@@ -9,7 +9,7 @@ from uuid import UUID
 class Order(db.Model):
     __tablename__ = "order"
 
-    id: Mapped[UUID] = mapped_column(primary_key=True)
+    id: Mapped[UUID] = mapped_column(primary_key=True, nullable=False)
     item_id: Mapped[str] = mapped_column(ForeignKey("item.id"), nullable=False)
     user_id: Mapped[str] = mapped_column(nullable=False)
     amount_bought: Mapped[int] = mapped_column(nullable=False)

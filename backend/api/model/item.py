@@ -8,7 +8,7 @@ from uuid import UUID
 class Item(db.Model):
     __tablename__ = "item"
 
-    id: Mapped[UUID] = mapped_column(primary_key=True)
+    id: Mapped[UUID] = mapped_column(primary_key=True, nullable=False)
     name: Mapped[str] = mapped_column(nullable=False)
     price: Mapped[Decimal] = mapped_column(nullable=False)
     count: Mapped[int] = mapped_column(nullable=False)
