@@ -2,7 +2,7 @@ from api.model.item import Item
 from api.model.order import Order
 from tracing.log import logger
 from api.model.db import db
-from sqlalchemy import insert, update
+from sqlalchemy import insert, update, select
 from typing import Dict
 from flask import abort
 from decimal import Decimal
@@ -19,7 +19,11 @@ class StoreService:
 
     def get_orders(self):
         logger.info("Retrieving orders from DB")
-        return Order.query.all()
+        query = select(Order.id, Order.user_id, Order.amount_bought,
+                      Order.total_price, Order.date_created,
+                      Item.name).join(Item)
+        orders = db.session.execute(query)
+        return orders
 
     def add_items(self, items):
         logger.info("Inserting new items into DB")

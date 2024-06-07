@@ -1,5 +1,5 @@
 from api.model.db import db
-from sqlalchemy.orm import Mapped, mapped_column
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 from datetime import datetime
 from decimal import Decimal
 from sqlalchemy import ForeignKey
@@ -15,3 +15,4 @@ class Order(db.Model):
     amount_bought: Mapped[int] = mapped_column(nullable=False)
     total_price: Mapped[Decimal] = mapped_column(nullable=False)
     date_created: Mapped[datetime] = mapped_column(nullable=False)
+    item = relationship("Item", foreign_keys=[item_id])
