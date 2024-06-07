@@ -12,6 +12,7 @@ CREATE TABLE IF NOT EXISTS "order" (
     item_id UUID REFERENCES item(id) NOT NULL,
     user_id UUID NOT NULL,
     amount_bought BIGINT NOT NULL,
+    total_price DECIMAL(10,2) NOT NULL,
     date_created TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW()
 );
 INSERT INTO item(name, price, count) VALUES('Cards', 1.00, 5);

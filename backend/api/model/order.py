@@ -13,4 +13,5 @@ class Order(db.Model):
     item_id: Mapped[str] = mapped_column(ForeignKey("item.id"), nullable=False)
     user_id: Mapped[str] = mapped_column(nullable=False)
     amount_bought: Mapped[int] = mapped_column(nullable=False)
+    total_price: Mapped[Decimal] = mapped_column(nullable=False)
     date_created: Mapped[datetime] = mapped_column(nullable=False)
