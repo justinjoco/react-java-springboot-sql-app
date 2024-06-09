@@ -1,5 +1,7 @@
 from api.model.item import Item
 from api.model.order import Order
+from api.model.item_order import ItemOrder
+
 from tracing.log import logger
 from api.model.db import db
 from sqlalchemy import insert, update, select
@@ -19,31 +21,21 @@ class StoreService:
 
     def get_all_orders(self):
         logger.info("Retrieving orders from DB")
-        query = select(Order.id, Order.user_id, Order.amount_bought,
-                       Order.total_price, Order.date_created,
-                       Item.name).join(Item)
-        orders = db.session.execute(query)
-        return orders
+        return Order.query.all()
 
     def get_orders_by_user_id(self, user_id):
         logger.info("Retrieving orders from DB")
-        query = select(
-            Order.id, Order.user_id, Order.amount_bought, Order.total_price,
-            Order.date_created,
-            Item.name).join(Item).where(Order.user_id == user_id)
-        orders = db.session.execute(query)
-        return orders
+        return Order.query.where(Order.user_id == user_id).all()
 
     def add_items(self, items):
         logger.info("Inserting new items into DB")
-        insert_stmt = insert(Item).values(items)
-        db.session.execute(insert_stmt)
+        new_items = [Item(**item) for item in items]
+        db.session.add_all(new_items)
         db.session.commit()
 
     def add_item(self, item):
         logger.info("Inserting new item into DB")
-        insert_stmt = insert(Item).values(item)
-        db.session.execute(insert_stmt)
+        db.session.add(Item(**item))
         db.session.commit()
 
     def update_item(self, item_id, item_update):
@@ -62,7 +54,19 @@ class StoreService:
 
     def purchase_specific_item(self, user_id, total_money, item_id, count):
         logger.info("Purchasing a specific item")
-        item: Item = Item.query.get_or_404(item_id)
+        order = Order(user_id=user_id)
+        db.session.add(order)
+        db.session.flush()
+        remainder = self.create_item_order(order.id, item_id, count,
+                                           total_money)
+        db.session.commit()
+        return f"Item has been bought; there is ${remainder} leftover"
+
+    def create_item_order(self, order_id, item_id, count, total_money):
+        item: Item = Item.query.get(item_id)
+        if item is None:
+            db.session.rollback()
+            abort(404, description="Item does not exist")
         total_price = float(item.price * count)
         remainder = total_money - total_price
         new_count = item.count - count
@@ -73,43 +77,25 @@ class StoreService:
                 400,
                 description=
                 "Client does not have enough money or there's not enough inventory of the given item")
-        update_stmt = update(Item).where(Item.id == item_id).values(
-            count=new_count)
-        db.session.execute(update_stmt)
-        insert_stmt = insert(Order).values(item_id=item_id,
-                                           user_id=user_id,
-                                           amount_bought=count,
-                                           total_price=total_price)
-        db.session.execute(insert_stmt)
-        db.session.commit()
-        return f"Item has been bought; there is ${remainder} leftover"
+        item.count = new_count
+        db.session.flush()
+        item_order = ItemOrder(order_id=order_id,
+                               item_id=item_id,
+                               amount_bought=count,
+                               total_price=total_price)
+        db.session.add(item_order)
+        return remainder
 
     def purchase_items(self, user_id, total_money, items_info):
         logger.info("Purchasing items")
+        order = Order(user_id=user_id)
+        db.session.add(order)
+        db.session.flush()
         for item_info in items_info:
             item_id = item_info["id"]
             count = item_info["count"]
-            item: Item = Item.query.get_or_404(item_id)
-            total_price = float(item.price * count)
-            total_money -= total_price
-            new_count = item.count - count
-            if new_count < 0 or total_money < 0:
-                logger.info(
-                    "You don't have enough money or there's not enough inventory for that item")
-                db.session.rollback()
-                abort(
-                    400,
-                    description=
-                    "Client does not have enough money or there's not enough inventory of the given item")
-            update_stmt = update(Item).where(Item.id == item_id).values(
-                count=new_count)
-            db.session.execute(update_stmt)
-            insert_stmt = insert(Order).values(item_id=item_id,
-                                               user_id=user_id,
-                                               amount_bought=count,
-                                               total_price=total_price)
-            db.session.execute(insert_stmt)
-
+            total_money = self.create_item_order(order.id, item_id, count,
+                                                 total_money)
         db.session.commit()
         return f"Items have been bought; there is ${total_money} leftover"
 

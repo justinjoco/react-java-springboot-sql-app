@@ -7,10 +7,17 @@ CREATE TABLE IF NOT EXISTS item (
     date_updated TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW()
 );
 CREATE INDEX IF NOT EXISTS item_name_idx ON item(name);
+
 CREATE TABLE IF NOT EXISTS "order" (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    user_id VARCHAR(255) NOT NULL,
+    date_created TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW()
+);
+
+CREATE TABLE IF NOT EXISTS "item_order" (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    order_id UUID REFERENCES "order"(id) NOT NULL,
     item_id UUID REFERENCES item(id) NOT NULL,
-    user_id UUID NOT NULL,
     amount_bought BIGINT NOT NULL,
     total_price DECIMAL(10,2) NOT NULL,
     date_created TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW()

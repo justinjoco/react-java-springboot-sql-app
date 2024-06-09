@@ -1,14 +1,13 @@
 from flask_marshmallow import Schema
-from marshmallow.fields import Str, Int, DateTime, Decimal
+from marshmallow.fields import Str, DateTime, Decimal, List, Nested
+from api.schema.item_order import ItemOrder
 
 
 class OrderCustomerResponse(Schema):
     class Meta:
         # Fields to expose
-        fields = ["id", "name", "amount_bought", "total_price", "date_created"]
+        fields = ["id", "item_orders" "date_created"]
 
     id = Str()
-    name = Str()
-    amount_bought = Int()
-    total_price = Decimal()
+    item_orders = List(Nested(ItemOrder))
     date_created = DateTime()
