@@ -5,7 +5,7 @@ const CustomNavbar = (props) => {
   return (
     <Navbar expand="lg" sticky="top" className="bg-body-tertiary">
       <Container>
-        <Navbar.Brand>React-Bootstrap</Navbar.Brand>
+        <Navbar.Brand>Shopping Store</Navbar.Brand>
 
         <Navbar.Toggle aria-controls="basic-navbar-nav" />
         <Navbar.Collapse>
