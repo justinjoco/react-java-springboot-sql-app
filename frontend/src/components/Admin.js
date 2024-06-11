@@ -42,33 +42,15 @@ Orders table for all users -> updated after shopping cart has finished or on cus
 
 import { Table, Container, Form, Button } from "react-bootstrap";
 import { useState, useEffect } from "react";
+
+const itemsFile = "./mockData/items.json";
+const ordersFile = "./mockData/ordersAdmin.json";
+
 export default function Admin() {
   const [itemDisplay, setItemDisplay] = useState(createItemDisplay());
   const [orderDisplay, setOrderDisplay] = useState(createOrderDisplay());
 
-  const addItemForm = (
-    <div>
-      <Form>
-        <h1>Add Item Form</h1>
-        <Form.Group>
-        <Form.Label>Item name</Form.Label>
-        <Form.Control  type="text" placeholder="My Item" />
-        </Form.Group>
-        <br />
-        <Form.Group>
-        <Form.Label>Item price</Form.Label>
-        <Form.Control type="text" placeholder="1.00" />
-        </Form.Group>
-        <br />
-        <Form.Group>
-        <Form.Label>Item count</Form.Label>
-        <Form.Control type="text" placeholder="5" />
-        </Form.Group>
-        <br/>
-        <Button>Submit</Button>
-      </Form>
-    </div>
-  );
+  const addItemForm = createAddItemForm();
   return (
     <Container>
       {itemDisplay}
@@ -78,22 +60,44 @@ export default function Admin() {
   );
 }
 
-function createItemDisplay(items){
-  return (<div>
-    <h1>Items</h1>
-  </div>)
+function createAddItemForm() {
+  return (
+    <div>
+      <Form>
+        <h1>Add Item Form</h1>
+        <Form.Group>
+          <Form.Label>Item name</Form.Label>
+          <Form.Control type="text" placeholder="My Item" />
+        </Form.Group>
+        <br />
+        <Form.Group>
+          <Form.Label>Item price</Form.Label>
+          <Form.Control type="text" placeholder="1.00" />
+        </Form.Group>
+        <br />
+        <Form.Group>
+          <Form.Label>Item count</Form.Label>
+          <Form.Control type="text" placeholder="5" />
+        </Form.Group>
+        <br />
+        <Button>Submit</Button>
+      </Form>
+    </div>
+  );
 }
 
-function createShoppingCart(items){
-  return (<div>
-    <h1>Shopping Cart</h1>
-  </div>)
+function createItemDisplay(items) {
+  return (
+    <div>
+      <h1>Items</h1>
+    </div>
+  );
 }
 
-function createOrderDisplay(orders){
-
-  return (<div>
-    <h1>Orders</h1>
-  </div>)
-
+function createOrderDisplay(orders) {
+  return (
+    <div>
+      <h1>Orders</h1>
+    </div>
+  );
 }

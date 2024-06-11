@@ -16,6 +16,10 @@ Orders table with user-specified id-> updated after shopping cart has finished o
 */
 import { Table, Container } from "react-bootstrap";
 import { useState, useEffect } from "react";
+
+const itemsFile = "./mockData/items.json";
+const ordersFile = "./mockData/ordersCustomer.json";
+
 export default function Customer() {
   const [itemDisplay, setItemDisplay] = useState(createItemDisplay());
   const [shoppingCart, setShoppingCart] = useState(createShoppingCart());
@@ -30,22 +34,26 @@ export default function Customer() {
   );
 }
 
-function createItemDisplay(items){
-  return (<div>
-    <h1>Items</h1>
-  </div>)
+function createItemDisplay(items) {
+  return (
+    <div>
+      <h1>Items</h1>
+    </div>
+  );
 }
 
-function createShoppingCart(items){
-  return (<div>
-    <h1>Shopping Cart</h1>
-  </div>)
+function createShoppingCart(items) {
+  return (
+    <div>
+      <h1>Shopping Cart</h1>
+    </div>
+  );
 }
 
-function createOrderDisplay(orders){
-
-  return (<div>
-    <h1>Orders</h1>
-  </div>)
-
+function createOrderDisplay(orders) {
+  return (
+    <div>
+      <h1>Orders</h1>
+    </div>
+  );
 }
