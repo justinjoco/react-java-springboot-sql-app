@@ -6,9 +6,11 @@ from api.schema.item_order import ItemOrder
 class OrderAdminResponse(Schema):
     class Meta:
         # Fields to expose
-        fields = ["id", "item_orders", "user_id", "date_created"]
+        fields = ["id", "item_orders", "user_id", "order_price", "date_created"
+                  ]
 
     id = Str()
     item_orders = List(Nested(ItemOrder))
     user_id = Str()
+    order_price = Decimal()
     date_created = DateTime()

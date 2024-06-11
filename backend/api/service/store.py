@@ -24,7 +24,7 @@ class StoreService:
         return Order.query.all()
 
     def get_orders_by_user_id(self, user_id):
-        logger.info("Retrieving orders from DB")
+        logger.info(f"Retrieving orders from DB for userId={user_id}")
         return Order.query.where(Order.user_id == user_id).all()
 
     def add_items(self, items):
@@ -52,31 +52,28 @@ class StoreService:
         db.session.delete(item)
         db.session.commit()
 
-    def purchase_specific_item(self, user_id, total_money, item_id, count):
+    def purchase_specific_item(self, user_id, item_id, count):
         logger.info("Purchasing a specific item")
         order = Order(user_id=user_id)
         db.session.add(order)
         db.session.flush()
-        remainder = self.create_item_order(order.id, item_id, count,
-                                           total_money)
+        order_price = self.create_item_order(order.id, item_id, count, )
+        order.order_price = order_price
         db.session.commit()
-        return f"Item has been bought; there is ${remainder} leftover"
+        return f"Item has been bought at a total price of ${order_price}"
 
-    def create_item_order(self, order_id, item_id, count, total_money):
+    def create_item_order(self, order_id, item_id, count):
         item: Item = Item.query.get(item_id)
         if item is None:
             db.session.rollback()
             abort(404, description="Item does not exist")
         total_price = float(item.price * count)
-        remainder = total_money - total_price
         new_count = item.count - count
-        if new_count < 0 or remainder < 0:
-            logger.info(
-                "You don't have enough money or there's not enough inventory for that item")
+        if new_count < 0:
+            logger.info("There's not enough inventory for that item")
             abort(
                 400,
-                description=
-                "Client does not have enough money or there's not enough inventory of the given item")
+                description="There's not enough inventory of the given item")
         item.count = new_count
         db.session.flush()
         item_order = ItemOrder(order_id=order_id,
@@ -84,20 +81,21 @@ class StoreService:
                                amount_bought=count,
                                total_price=total_price)
         db.session.add(item_order)
-        return remainder
+        return total_price
 
-    def purchase_items(self, user_id, total_money, items_info):
+    def purchase_items(self, user_id, items_info):
         logger.info("Purchasing items")
         order = Order(user_id=user_id)
         db.session.add(order)
         db.session.flush()
+        order_price = 0
         for item_info in items_info:
             item_id = item_info["id"]
             count = item_info["count"]
-            total_money = self.create_item_order(order.id, item_id, count,
-                                                 total_money)
+            order_price += self.create_item_order(order.id, item_id, count)
+        order.order_price = order_price
         db.session.commit()
-        return f"Items have been bought; there is ${total_money} leftover"
+        return f"Items have been bought; total price = {order_price}"
 
 
 store_service = StoreService()

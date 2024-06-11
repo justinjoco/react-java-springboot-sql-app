@@ -11,11 +11,9 @@ customer_api = Blueprint('customer_api', __name__)
 @customer_api.post('/items/purchase')
 def purchase_items():
     user_id = request.headers["userId"]
-    body = request.json
-    total_money = body["totalMoney"]
-    items_info = body["items"]
+    items_info = request.json
     logger.info(f"Purchasing items")
-    result = store_service.purchase_items(user_id, total_money, items_info)
+    result = store_service.purchase_items(user_id, items_info)
     return result, 201
 
 
@@ -23,9 +21,7 @@ def purchase_items():
 def purchase_specific_item(item_id):
     user_id = request.headers["userId"]
     body = request.json
-    total_money = body["totalMoney"]
     count = body["count"]
     logger.info(f"Purchasing specific item with id {item_id}")
-    result = store_service.purchase_specific_item(user_id, total_money,
-                                                  item_id, count)
+    result = store_service.purchase_specific_item(user_id, item_id, count)
     return result, 201

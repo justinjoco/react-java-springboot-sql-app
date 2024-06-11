@@ -11,6 +11,7 @@ CREATE INDEX IF NOT EXISTS item_name_idx ON item(name);
 CREATE TABLE IF NOT EXISTS "order" (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     user_id VARCHAR(255) NOT NULL,
+    order_price DECIMAL(10,2),
     date_created TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW()
 );
 
