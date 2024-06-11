@@ -14,11 +14,38 @@ Items table - Rendered on customer page render
 Orders table with user-specified id-> updated after shopping cart has finished or on customer page render
 - Row: Order id, item name, amount, date created, total price
 */
-
+import { Table, Container } from "react-bootstrap";
+import { useState, useEffect } from "react";
 export default function Customer() {
+  const [itemDisplay, setItemDisplay] = useState(createItemDisplay());
+  const [shoppingCart, setShoppingCart] = useState(createShoppingCart());
+  const [orderDisplay, setOrderDisplay] = useState(createOrderDisplay());
+
   return (
-    <div>
-      <h1>Customer</h1>
-    </div>
+    <Container>
+      {itemDisplay}
+      {shoppingCart}
+      {orderDisplay}
+    </Container>
   );
+}
+
+function createItemDisplay(items){
+  return (<div>
+    <h1>Items</h1>
+  </div>)
+}
+
+function createShoppingCart(items){
+  return (<div>
+    <h1>Shopping Cart</h1>
+  </div>)
+}
+
+function createOrderDisplay(orders){
+
+  return (<div>
+    <h1>Orders</h1>
+  </div>)
+
 }
