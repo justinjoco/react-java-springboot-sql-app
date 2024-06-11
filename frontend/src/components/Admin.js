@@ -50,6 +50,23 @@ export default function Admin() {
   const [itemDisplay, setItemDisplay] = useState(createItemDisplay());
   const [orderDisplay, setOrderDisplay] = useState(createOrderDisplay());
 
+  const fetchItems = async () => {
+    const response = await fetch(itemsFile);
+    const json = await response.json();
+    console.log(json);
+  };
+
+  const fetchOrders = async () => {
+    const response = await fetch(ordersFile);
+    const json = await response.json();
+    console.log(json);
+  };
+
+  useEffect(() => {
+    fetchItems();
+    fetchOrders();
+  }, []);
+
   const addItemForm = createAddItemForm();
   return (
     <Container>
