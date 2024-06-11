@@ -47,25 +47,33 @@ const itemsFile = "./mockData/items.json";
 const ordersFile = "./mockData/ordersAdmin.json";
 
 export default function Admin() {
-  const [itemDisplay, setItemDisplay] = useState(createItemDisplay());
-  const [orderDisplay, setOrderDisplay] = useState(createOrderDisplay());
+  const [itemDisplay, setItemDisplay] = useState([]);
+  const [orderDisplay, setOrderDisplay] = useState([]);
+  const [shouldFetch, setShouldFetch] = useState(true);
 
   const fetchItems = async () => {
     const response = await fetch(itemsFile);
-    const json = await response.json();
-    console.log(json);
+    const items = await response.json();
+    console.log(items);
+    setItemDisplay(createItemDisplay(items));
   };
 
   const fetchOrders = async () => {
     const response = await fetch(ordersFile);
-    const json = await response.json();
-    console.log(json);
+    const orders = await response.json();
+    console.log(orders);
+    setOrderDisplay(createOrderDisplay(orders));
   };
 
   useEffect(() => {
-    fetchItems();
-    fetchOrders();
-  }, []);
+    if (shouldFetch) {
+      fetchItems();
+      fetchOrders();
+    }
+    return () => {
+      setShouldFetch(false);
+    };
+  }, [shouldFetch]);
 
   const addItemForm = createAddItemForm();
   return (
@@ -104,17 +112,78 @@ function createAddItemForm() {
 }
 
 function createItemDisplay(items) {
+  const tableBody = items.map((item) => {
+    return (
+      <tr key={`item${item.id}`}>
+        <td>{item.name}</td>
+        <td>{item.price}</td>
+        <td>{item.count}</td>
+      </tr>
+    );
+  });
   return (
     <div>
       <h1>Items</h1>
+      <Table striped bordered hover>
+        <thead>
+          <tr>
+            <th>Item Name</th>
+            <th>Price</th>
+            <th>Available count</th>
+          </tr>
+        </thead>
+        <tbody>{tableBody}</tbody>
+      </Table>
     </div>
   );
 }
 
 function createOrderDisplay(orders) {
+  const tableBody = orders.map((order) => {
+    const itemOrders = order["item_orders"];
+    const rowSpanSize = itemOrders.length;
+
+    const itemOrderBody = itemOrders.map((itemOrder, index) => {
+      let orderRow = null;
+      console.log(index);
+      if (index === 0) {
+        orderRow = (
+          <>
+            <td rowSpan={rowSpanSize}>{order.id}</td>
+            <td rowSpan={rowSpanSize}>{order.order_price}</td>
+            <td rowSpan={rowSpanSize}>{order.date_created}</td>
+            <td rowSpan={rowSpanSize}>{order.user_id}</td>
+          </>
+        );
+      }
+      return (
+        <tr key={`${order.id}:${itemOrder.item}`}>
+          {orderRow}
+          <td>{itemOrder.item}</td>
+          <td>{itemOrder.amount_bought}</td>
+          <td>{itemOrder.total_price}</td>
+        </tr>
+      );
+    });
+    return itemOrderBody;
+  });
   return (
     <div>
       <h1>Orders</h1>
+      <Table striped bordered hover>
+        <thead>
+          <tr>
+            <th>Order ID</th>
+            <th>Order Price</th>
+            <th>Order Created </th>
+            <th>User ID</th>
+            <th>Item Price</th>
+            <th>Amount Bought</th>
+            <th>Item Price</th>
+          </tr>
+        </thead>
+        <tbody>{tableBody}</tbody>
+      </Table>
     </div>
   );
 }
