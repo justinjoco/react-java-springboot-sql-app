@@ -13,9 +13,8 @@ export async function getOrders(userId) {
   return result;
 }
 
-/*
-export async function purchaseItems() {
-  const response = await fetch("https://example.com/profile", {
+export async function purchaseItems(data) {
+  const response = await fetch("http://localhost:5000/items/purchase", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -23,7 +22,6 @@ export async function purchaseItems() {
     body: JSON.stringify(data),
   });
 
-  const result = await response.json();
+  const result = await response.text();
   console.log("Success:", result);
 }
-*/
