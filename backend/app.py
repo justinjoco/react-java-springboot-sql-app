@@ -5,6 +5,7 @@ from waitress import serve
 from api.route.common import common_api
 from api.route.customer import customer_api
 from api.route.admin import admin_api
+from flask_cors import CORS
 
 from api.model.db import db
 from tracing.log import logger
@@ -12,6 +13,7 @@ from tracing.log import logger
 
 def create_app():
     app = Flask(__name__)
+    CORS(app)
     app.config["SQLALCHEMY_DATABASE_URI"
                ] = "postgresql://admin:password@db/shopping_store"
     # initialize the app with the extension

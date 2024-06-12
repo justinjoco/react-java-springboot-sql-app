@@ -1,30 +1,20 @@
-async function getOrders() {
-  const response = await fetch("https://example.com/profile", {
+export async function getOrders(userId) {
+  const response = await fetch("http://localhost:5000/orders", {
     method: "GET",
     headers: {
       "Content-Type": "application/json",
+      userId: userId,
     },
-    body: JSON.stringify(data),
   });
 
   const result = await response.json();
+  console.log(result);
+
   return result;
 }
 
-async function getItems() {
-  const response = await fetch("https://example.com/profile", {
-    method: "GET",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(data),
-  });
-
-  const result = await response.json();
-  return result;
-}
-
-async function purchaseItems() {
+/*
+export async function purchaseItems() {
   const response = await fetch("https://example.com/profile", {
     method: "POST",
     headers: {
@@ -36,3 +26,4 @@ async function purchaseItems() {
   const result = await response.json();
   console.log("Success:", result);
 }
+*/

@@ -13,40 +13,11 @@ Items table - Rendered on customer page render
 
 Orders table with user-specified id-> updated after shopping cart has finished or on customer page render
 - Row: Order id, item name, amount, date created, total price
-
-<Table striped bordered hover>
-  <thead>
-    <tr>
-      <th>#</th>
-      <th>First Name</th>
-      <th>Last Name</th>
-      <th>Username</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td>1</td>
-      <td>Mark</td>
-      <td>Otto</td>
-      <td>@mdo</td>
-    </tr>
-    <tr>
-      <td>2</td>
-      <td>Jacob</td>
-      <td>Thornton</td>
-      <td>@fat</td>
-    </tr>
-    <tr>
-      <td>3</td>
-      <td colSpan={2}>Larry the Bird</td>
-      <td>@twitter</td>
-    </tr>
-  </tbody>
-</Table>
 */
 import { Table, Container } from "react-bootstrap";
 import { useState, useEffect } from "react";
-
+import { getItems } from "../api-client/CommonClient";
+import { getOrders } from "../api-client/CustomerClient";
 const itemsFile = "./mockData/items.json";
 const ordersFile = "./mockData/ordersCustomer.json";
 
@@ -57,15 +28,13 @@ export default function Customer() {
   const [shouldFetch, setShouldFetch] = useState(true);
 
   const fetchItems = async () => {
-    const response = await fetch(itemsFile);
-    const items = await response.json();
+    const items = await getItems();
     console.log(items);
     setItemDisplay(createItemDisplay(items));
   };
 
   const fetchOrders = async () => {
-    const response = await fetch(ordersFile);
-    const orders = await response.json();
+    const orders = await getOrders("myUserId");
     console.log(orders);
     setOrderDisplay(createOrderDisplay(orders));
   };

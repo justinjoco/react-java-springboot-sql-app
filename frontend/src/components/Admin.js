@@ -42,6 +42,8 @@ Orders table for all users -> updated after shopping cart has finished or on cus
 
 import { Table, Container, Form, Button } from "react-bootstrap";
 import { useState, useEffect } from "react";
+import { getItems } from "../api-client/CommonClient";
+import { getOrders } from "../api-client/CustomerClient";
 
 const itemsFile = "./mockData/items.json";
 const ordersFile = "./mockData/ordersAdmin.json";
@@ -52,15 +54,13 @@ export default function Admin() {
   const [shouldFetch, setShouldFetch] = useState(true);
 
   const fetchItems = async () => {
-    const response = await fetch(itemsFile);
-    const items = await response.json();
+    const items = await getItems();
     console.log(items);
     setItemDisplay(createItemDisplay(items));
   };
 
   const fetchOrders = async () => {
-    const response = await fetch(ordersFile);
-    const orders = await response.json();
+    const orders = await getOrders();
     console.log(orders);
     setOrderDisplay(createOrderDisplay(orders));
   };

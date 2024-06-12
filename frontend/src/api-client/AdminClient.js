@@ -1,18 +1,18 @@
-async function getOrders() {
-  const response = await fetch("https://example.com/profile", {
+export async function getOrders() {
+  const response = await fetch("http://localhost:5000/items", {
     method: "GET",
     headers: {
       "Content-Type": "application/json",
       role: "admin",
     },
-    body: JSON.stringify(data),
   });
 
   const result = await response.json();
+  console.log(result);
   return result;
 }
-
-async function addItems() {
+/*
+export async function addItems() {
   const response = await fetch("https://example.com/profile", {
     method: "POST", // or 'PUT'
     headers: {
@@ -26,7 +26,7 @@ async function addItems() {
   console.log("Success:", result);
 }
 
-async function updateItem() {
+export async function updateItem() {
   const response = await fetch("https://example.com/profile", {
     method: "PUT", // or 'PUT'
     headers: {
@@ -40,7 +40,7 @@ async function updateItem() {
   console.log("Success:", result);
 }
 
-async function deleteItem() {
+export async function deleteItem() {
   const response = await fetch("https://example.com/profile", {
     method: "DELETE", // or 'PUT'
     headers: {
@@ -53,3 +53,4 @@ async function deleteItem() {
   const result = await response.json();
   console.log("Success:", result);
 }
+*/
