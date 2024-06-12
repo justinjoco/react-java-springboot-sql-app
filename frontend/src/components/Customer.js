@@ -14,30 +14,123 @@ Items table - Rendered on customer page render
 Orders table with user-specified id-> updated after shopping cart has finished or on customer page render
 - Row: Order id, item name, amount, date created, total price
 */
-import { Table, Container } from "react-bootstrap";
-import { useState, useEffect } from "react";
-import { getItems } from "../api-client/CommonClient";
-import { getOrders } from "../api-client/CustomerClient";
-const itemsFile = "./mockData/items.json";
-const ordersFile = "./mockData/ordersCustomer.json";
+import {
+  Table,
+  Container,
+  Dropdown,
+  DropdownButton,
+  Button,
+} from "react-bootstrap";
+import { useState, useEffect, useRef } from "react";
+import { getItems, getItemsMock } from "../api-client/CommonClient";
+import {
+  getOrders,
+  getOrdersMock,
+  purchaseItems,
+} from "../api-client/CustomerClient";
 
 export default function Customer() {
   const [itemDisplay, setItemDisplay] = useState([]);
   const [shoppingCart, setShoppingCart] = useState(createShoppingCart());
+  const shoppingCartDataRef = useRef({});
   const [orderDisplay, setOrderDisplay] = useState([]);
   const [shouldFetch, setShouldFetch] = useState(true);
 
   const fetchItems = async () => {
-    const items = await getItems();
+    //const items = await getItems();
+    const items = await getItemsMock();
     console.log(items);
     setItemDisplay(createItemDisplay(items));
   };
 
   const fetchOrders = async () => {
-    const orders = await getOrders("myUserId");
+    //const orders = await getOrders("myUserId");
+    const orders = await getOrdersMock("myUserId");
+
     console.log(orders);
     setOrderDisplay(createOrderDisplay(orders));
   };
+
+  const makePurchase = async (items) => {
+    //const orders = await getOrders("myUserId");
+    await purchaseItems(items);
+    setShouldFetch(true);
+  };
+
+  const handleAddToCartButtonClick = (event) => {
+    console.log(event);
+  };
+
+  const handleShoppingCartSubmit = (event) => {
+    console.log(event);
+  };
+
+  function createItemDisplay(items) {
+    const tableBody = items.map((item) => {
+      const dropdownItems = [];
+      const numOptions = Math.min(5, item.count);
+      for (let i = 1; i <= numOptions; i++) {
+        dropdownItems.push(
+          <Dropdown.Item
+            key={`${item.name}:${i}`}
+            value={i}
+            onClick={(e) => handleAddToCartButtonClick(e)}
+          >
+            {i}
+          </Dropdown.Item>,
+        );
+      }
+      const addToCartButton = (
+        <DropdownButton title="Add">{dropdownItems}</DropdownButton>
+      );
+
+      return (
+        <tr key={`item${item.id}`}>
+          <td>{item.name}</td>
+          <td>{item.price}</td>
+          <td>{item.count}</td>
+          <td>{addToCartButton}</td>
+        </tr>
+      );
+    });
+    return (
+      <div>
+        <h1>Items</h1>
+        <Table striped bordered hover>
+          <thead>
+            <tr>
+              <th>Item Name</th>
+              <th>Unit Price</th>
+              <th>Available count</th>
+              <th>Add to Cart?</th>
+            </tr>
+          </thead>
+          <tbody>{tableBody}</tbody>
+        </Table>
+      </div>
+    );
+  }
+
+  function createShoppingCart(items) {
+    const tableBody = null;
+    return (
+      <div>
+        <h1>Shopping Cart</h1>
+        <Table striped bordered hover>
+          <thead>
+            <tr>
+              <th>Item Name</th>
+              <th>Total Price</th>
+              <th>Amount to buy</th>
+            </tr>
+          </thead>
+          <tbody>{tableBody}</tbody>
+        </Table>
+        {tableBody}
+        <Button onClick={(e) => handleShoppingCartSubmit(e)}>Submit</Button>
+      </div>
+    );
+  }
 
   useEffect(() => {
     if (shouldFetch) {
@@ -55,41 +148,6 @@ export default function Customer() {
       {shoppingCart}
       {orderDisplay}
     </Container>
-  );
-}
-
-function createItemDisplay(items) {
-  const tableBody = items.map((item) => {
-    return (
-      <tr key={`item${item.id}`}>
-        <td>{item.name}</td>
-        <td>{item.price}</td>
-        <td>{item.count}</td>
-      </tr>
-    );
-  });
-  return (
-    <div>
-      <h1>Items</h1>
-      <Table striped bordered hover>
-        <thead>
-          <tr>
-            <th>Item Name</th>
-            <th>Price</th>
-            <th>Available count</th>
-          </tr>
-        </thead>
-        <tbody>{tableBody}</tbody>
-      </Table>
-    </div>
-  );
-}
-
-function createShoppingCart(items) {
-  return (
-    <div>
-      <h1>Shopping Cart</h1>
-    </div>
   );
 }
 
@@ -130,7 +188,7 @@ function createOrderDisplay(orders) {
             <th>Order ID</th>
             <th>Order Price</th>
             <th>Order Created </th>
-            <th>Item Price</th>
+            <th>Item Name</th>
             <th>Amount Bought</th>
             <th>Item Price</th>
           </tr>

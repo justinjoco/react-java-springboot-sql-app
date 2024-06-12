@@ -1,3 +1,9 @@
+const ordersFile = "./mockData/ordersCustomer.json";
+
+export async function getOrdersMock() {
+  return await (await fetch(ordersFile)).json();
+}
+
 export async function getOrders(userId) {
   const response = await fetch("http://localhost:5000/orders", {
     method: "GET",
@@ -13,13 +19,13 @@ export async function getOrders(userId) {
   return result;
 }
 
-export async function purchaseItems(data) {
+export async function purchaseItems(items) {
   const response = await fetch("http://localhost:5000/items/purchase", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
     },
-    body: JSON.stringify(data),
+    body: JSON.stringify(items),
   });
 
   const result = await response.text();

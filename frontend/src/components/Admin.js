@@ -42,8 +42,14 @@ Orders table for all users -> updated after shopping cart has finished or on cus
 
 import { Table, Container, Form, Button } from "react-bootstrap";
 import { useState, useEffect } from "react";
-import { getItems } from "../api-client/CommonClient";
-import { getOrders } from "../api-client/CustomerClient";
+import { getItems, getItemsMock } from "../api-client/CommonClient";
+import {
+  getOrders,
+  getOrdersMock,
+  addItems,
+  updateItem,
+  deleteItem,
+} from "../api-client/AdminClient";
 
 const itemsFile = "./mockData/items.json";
 const ordersFile = "./mockData/ordersAdmin.json";
@@ -54,17 +60,34 @@ export default function Admin() {
   const [shouldFetch, setShouldFetch] = useState(true);
 
   const fetchItems = async () => {
-    const items = await getItems();
+    // const items = await getItems();
+    const items = await getItemsMock();
+
     console.log(items);
     setItemDisplay(createItemDisplay(items));
   };
 
   const fetchOrders = async () => {
-    const orders = await getOrders();
+    // const orders = await getOrders();
+    const orders = await getOrdersMock();
     console.log(orders);
     setOrderDisplay(createOrderDisplay(orders));
   };
 
+  const createNewItems = async (items) => {
+    await addItems(items);
+    setShouldFetch(true);
+  };
+
+  const updateSpecificItem = async (itemId, update) => {
+    await updateItem(itemId, update);
+    setShouldFetch(true);
+  };
+
+  const deleteSpecificItem = async (itemId) => {
+    await deleteItem(itemId);
+    setShouldFetch(true);
+  };
   useEffect(() => {
     if (shouldFetch) {
       fetchItems();
@@ -75,6 +98,79 @@ export default function Admin() {
     };
   }, [shouldFetch]);
 
+  const handleUpdateButton = (e) => {};
+
+  const handleDeleteButton = (e) => {};
+
+  const handleAddItemSubmit = (e) => {};
+
+  function createItemDisplay(items) {
+    const tableBody = items.map((item) => {
+      const updateButton = (
+        <Button variant="secondary" onClick={(e) => handleUpdateButton(e)}>
+          Update item
+        </Button>
+      );
+      const deleteButton = (
+        <Button variant="danger" onClick={(e) => handleDeleteButton(e)}>
+          Delete item
+        </Button>
+      );
+      return (
+        <tr key={`item${item.id}`}>
+          <td>{item.name}</td>
+          <td>{item.price}</td>
+          <td>{item.count}</td>
+          <td>{updateButton}</td>
+          <td>{deleteButton}</td>
+        </tr>
+      );
+    });
+    return (
+      <div>
+        <h1>Items</h1>
+        <Table striped bordered hover>
+          <thead>
+            <tr>
+              <th>Item Name</th>
+              <th>Price</th>
+              <th>Available count</th>
+              <th>Update?</th>
+              <th>Delete?</th>
+            </tr>
+          </thead>
+          <tbody>{tableBody}</tbody>
+        </Table>
+      </div>
+    );
+  }
+
+  function createAddItemForm() {
+    return (
+      <div>
+        <Form>
+          <h1>Add Item Form</h1>
+          <Form.Group>
+            <Form.Label>Item name</Form.Label>
+            <Form.Control type="text" placeholder="My Item" />
+          </Form.Group>
+          <br />
+          <Form.Group>
+            <Form.Label>Item price</Form.Label>
+            <Form.Control type="text" placeholder="1.00" />
+          </Form.Group>
+          <br />
+          <Form.Group>
+            <Form.Label>Item count</Form.Label>
+            <Form.Control type="text" placeholder="5" />
+          </Form.Group>
+          <br />
+          <Button onClick={(e) => handleAddItemSubmit(e)}>Submit</Button>
+        </Form>
+      </div>
+    );
+  }
+
   const addItemForm = createAddItemForm();
   return (
     <Container>
@@ -82,59 +178,6 @@ export default function Admin() {
       {addItemForm}
       {orderDisplay}
     </Container>
-  );
-}
-
-function createAddItemForm() {
-  return (
-    <div>
-      <Form>
-        <h1>Add Item Form</h1>
-        <Form.Group>
-          <Form.Label>Item name</Form.Label>
-          <Form.Control type="text" placeholder="My Item" />
-        </Form.Group>
-        <br />
-        <Form.Group>
-          <Form.Label>Item price</Form.Label>
-          <Form.Control type="text" placeholder="1.00" />
-        </Form.Group>
-        <br />
-        <Form.Group>
-          <Form.Label>Item count</Form.Label>
-          <Form.Control type="text" placeholder="5" />
-        </Form.Group>
-        <br />
-        <Button>Submit</Button>
-      </Form>
-    </div>
-  );
-}
-
-function createItemDisplay(items) {
-  const tableBody = items.map((item) => {
-    return (
-      <tr key={`item${item.id}`}>
-        <td>{item.name}</td>
-        <td>{item.price}</td>
-        <td>{item.count}</td>
-      </tr>
-    );
-  });
-  return (
-    <div>
-      <h1>Items</h1>
-      <Table striped bordered hover>
-        <thead>
-          <tr>
-            <th>Item Name</th>
-            <th>Price</th>
-            <th>Available count</th>
-          </tr>
-        </thead>
-        <tbody>{tableBody}</tbody>
-      </Table>
-    </div>
   );
 }
 
@@ -177,7 +220,7 @@ function createOrderDisplay(orders) {
             <th>Order Price</th>
             <th>Order Created </th>
             <th>User ID</th>
-            <th>Item Price</th>
+            <th>Item Name</th>
             <th>Amount Bought</th>
             <th>Item Price</th>
           </tr>

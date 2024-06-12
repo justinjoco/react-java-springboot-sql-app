@@ -1,3 +1,9 @@
+const ordersFile = "./mockData/ordersAdmin.json";
+
+export async function getOrdersMock() {
+  return await (await fetch(ordersFile)).json();
+}
+
 export async function getOrders() {
   const response = await fetch("http://localhost:5000/items", {
     method: "GET",
@@ -12,28 +18,28 @@ export async function getOrders() {
   return result;
 }
 
-export async function addItems(data) {
+export async function addItems(items) {
   const response = await fetch("http://localhost:5000/items", {
-    method: "POST", // or 'PUT'
+    method: "POST",
     headers: {
       "Content-Type": "application/json",
       role: "admin",
     },
-    body: JSON.stringify(data),
+    body: JSON.stringify(items),
   });
 
   const result = await response.text();
   console.log("Success:", result);
 }
 
-export async function updateItem(data) {
-  const response = await fetch("http://localhost:5000/item", {
-    method: "PUT", // or 'PUT'
+export async function updateItem(itemId, update) {
+  const response = await fetch(`http://localhost:5000/item/${itemId}`, {
+    method: "PUT",
     headers: {
       "Content-Type": "application/json",
       role: "admin",
     },
-    body: JSON.stringify(data),
+    body: JSON.stringify(update),
   });
 
   const result = await response.text();
@@ -42,7 +48,7 @@ export async function updateItem(data) {
 
 export async function deleteItem(itemId) {
   const response = await fetch(`"http://localhost:5000/item/${itemId}"`, {
-    method: "DELETE", // or 'PUT'
+    method: "DELETE",
     headers: {
       role: "admin",
     },
