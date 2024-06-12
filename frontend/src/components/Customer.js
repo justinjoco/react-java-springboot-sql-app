@@ -31,8 +31,8 @@ import {
 
 export default function Customer() {
   const [itemDisplay, setItemDisplay] = useState([]);
-  const [shoppingCart, setShoppingCart] = useState(createShoppingCart());
-  const shoppingCartDataRef = useRef({});
+  const [shoppingCart, setShoppingCart] = useState(createShoppingCart([]));
+  const shoppingCartDataRef = useRef([]);
   const [orderDisplay, setOrderDisplay] = useState([]);
   const [shouldFetch, setShouldFetch] = useState(true);
 
@@ -58,11 +58,18 @@ export default function Customer() {
   };
 
   const handleAddToCartButtonClick = (event) => {
-    console.log(event);
+    let shoppingCartData = shoppingCartDataRef.current;
+    const item = JSON.parse(event.target.value);
+    console.log(item);
+    shoppingCartData.push(item);
+    const cart = createShoppingCart(shoppingCartData);
+    setShoppingCart(cart);
+    shoppingCartDataRef.current = shoppingCartData;
   };
 
-  const handleShoppingCartSubmit = (event) => {
-    console.log(event);
+  const handleShoppingCartSubmit = () => {
+    const items = shoppingCartDataRef.current;
+    console.log(items);
   };
 
   function createItemDisplay(items) {
@@ -72,8 +79,14 @@ export default function Customer() {
       for (let i = 1; i <= numOptions; i++) {
         dropdownItems.push(
           <Dropdown.Item
+            as="button"
             key={`${item.name}:${i}`}
-            value={i}
+            value={JSON.stringify({
+              id: item.id,
+              name: item.name,
+              count: i,
+              price: item.price,
+            })}
             onClick={(e) => handleAddToCartButtonClick(e)}
           >
             {i}
@@ -112,7 +125,15 @@ export default function Customer() {
   }
 
   function createShoppingCart(items) {
-    const tableBody = null;
+    const tableBody = items.map((item, index) => {
+      return (
+        <tr key={`itemShoppingCart${item.id}:${index}`}>
+          <td>{item.name}</td>
+          <td>{item.count}</td>
+          <td>{item.price * item.count}</td>
+        </tr>
+      );
+    });
     return (
       <div>
         <h1>Shopping Cart</h1>
@@ -120,14 +141,13 @@ export default function Customer() {
           <thead>
             <tr>
               <th>Item Name</th>
-              <th>Total Price</th>
               <th>Amount to buy</th>
+              <th>Total Price</th>
             </tr>
           </thead>
           <tbody>{tableBody}</tbody>
         </Table>
-        {tableBody}
-        <Button onClick={(e) => handleShoppingCartSubmit(e)}>Submit</Button>
+        <Button onClick={() => handleShoppingCartSubmit()}>Submit</Button>
       </div>
     );
   }
