@@ -28,7 +28,7 @@ import {
   getOrdersMock,
   purchaseItems,
 } from "../api-client/CustomerClient";
-
+const userId = "myUserId";
 export default function Customer() {
   const [itemDisplay, setItemDisplay] = useState([]);
   const [shoppingCart, setShoppingCart] = useState(createShoppingCart([]));
@@ -45,7 +45,7 @@ export default function Customer() {
 
   const fetchOrders = async () => {
     //const orders = await getOrders("myUserId");
-    const orders = await getOrdersMock("myUserId");
+    const orders = await getOrdersMock();
 
     console.log(orders);
     setOrderDisplay(createOrderDisplay(orders));
@@ -53,7 +53,7 @@ export default function Customer() {
 
   const makePurchase = async (items) => {
     //const orders = await getOrders("myUserId");
-    await purchaseItems(items);
+    await purchaseItems(userId, items);
     setShouldFetch(true);
   };
 
@@ -70,6 +70,8 @@ export default function Customer() {
   const handleShoppingCartSubmit = () => {
     const items = shoppingCartDataRef.current;
     console.log(items);
+    makePurchase(items);
+    shoppingCartDataRef.current = [];
   };
 
   function createItemDisplay(items) {

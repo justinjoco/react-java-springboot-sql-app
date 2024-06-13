@@ -40,7 +40,7 @@ Orders table for all users -> updated after shopping cart has finished or on cus
 </Table>
 */
 
-import { Table, Container, Form, Button } from "react-bootstrap";
+import { Table, Container, Form, Button, Modal } from "react-bootstrap";
 import { useState, useEffect } from "react";
 import { getItems, getItemsMock } from "../api-client/CommonClient";
 import {
@@ -51,13 +51,11 @@ import {
   deleteItem,
 } from "../api-client/AdminClient";
 
-const itemsFile = "./mockData/items.json";
-const ordersFile = "./mockData/ordersAdmin.json";
-
 export default function Admin() {
   const [itemDisplay, setItemDisplay] = useState([]);
   const [orderDisplay, setOrderDisplay] = useState([]);
   const [shouldFetch, setShouldFetch] = useState(true);
+  const [show, setShow] = useState(false);
 
   const fetchItems = async () => {
     // const items = await getItems();
@@ -98,11 +96,16 @@ export default function Admin() {
     };
   }, [shouldFetch]);
 
-  const handleUpdateButton = (e) => {};
+  const handleUpdateButton = (e) => {
+    console.log("update button");
+    setShow(true);
+  };
 
   const handleDeleteButton = (e) => {};
 
   const handleAddItemSubmit = (e) => {};
+
+  const handleClose = () => setShow(false);
 
   function createItemDisplay(items) {
     const tableBody = items.map((item) => {
@@ -141,6 +144,7 @@ export default function Admin() {
           </thead>
           <tbody>{tableBody}</tbody>
         </Table>
+        {modal}
       </div>
     );
   }
@@ -170,13 +174,29 @@ export default function Admin() {
       </div>
     );
   }
-
+  const modal = (
+    <Modal show={show} onHide={handleClose}>
+      <Modal.Header closeButton>
+        <Modal.Title>Update Item</Modal.Title>
+      </Modal.Header>
+      <Modal.Body>Woohoo, you are reading this text in a modal!</Modal.Body>
+      <Modal.Footer>
+        <Button variant="secondary" onClick={handleClose}>
+          Close
+        </Button>
+        <Button variant="primary" onClick={handleClose}>
+          Update item
+        </Button>
+      </Modal.Footer>
+    </Modal>
+  );
   const addItemForm = createAddItemForm();
   return (
     <Container>
       {itemDisplay}
       {addItemForm}
       {orderDisplay}
+      {modal}
     </Container>
   );
 }
