@@ -41,7 +41,7 @@ Orders table for all users -> updated after shopping cart has finished or on cus
 */
 
 import { Table, Container, Form, Button, Modal } from "react-bootstrap";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { getItems, getItemsMock } from "../api-client/CommonClient";
 import {
   getOrders,
@@ -54,6 +54,7 @@ import {
 export default function Admin() {
   const [itemDisplay, setItemDisplay] = useState([]);
   const [orderDisplay, setOrderDisplay] = useState([]);
+  const itemToUpdateRef = useRef("");
   const [shouldFetch, setShouldFetch] = useState(true);
   const [show, setShow] = useState(false);
 
@@ -97,25 +98,51 @@ export default function Admin() {
   }, [shouldFetch]);
 
   const handleUpdateButton = (e) => {
-    console.log("update button");
+    itemToUpdateRef.current = e.target.value;
     setShow(true);
   };
 
-  const handleDeleteButton = (e) => {};
+  const handleUpdateItemSubmit = (e) => {
+    e.preventDefault();
+    const itemId = itemToUpdateRef.current;
+    const formData = new FormData(e.target),
+      formDataObj = Object.fromEntries(formData.entries());
+    const requestBody = { ...formDataObj, id: itemId };
+    console.log(requestBody);
 
-  const handleAddItemSubmit = (e) => {};
+    setShow(false);
+  };
+
+  const handleDeleteButton = (e) => {
+    console.log(`item id to delete: ${e.target.value}`);
+  };
+
+  const handleAddItemSubmit = (e) => {
+    e.preventDefault();
+    const formData = new FormData(e.target),
+      formDataObj = Object.fromEntries(formData.entries());
+    console.log(formDataObj);
+  };
 
   const handleClose = () => setShow(false);
 
   function createItemDisplay(items) {
     const tableBody = items.map((item) => {
       const updateButton = (
-        <Button variant="secondary" onClick={(e) => handleUpdateButton(e)}>
+        <Button
+          variant="secondary"
+          value={item.id}
+          onClick={(e) => handleUpdateButton(e)}
+        >
           Update item
         </Button>
       );
       const deleteButton = (
-        <Button variant="danger" onClick={(e) => handleDeleteButton(e)}>
+        <Button
+          variant="danger"
+          value={item.id}
+          onClick={(e) => handleDeleteButton(e)}
+        >
           Delete item
         </Button>
       );
@@ -152,24 +179,24 @@ export default function Admin() {
   function createAddItemForm() {
     return (
       <div>
-        <Form>
+        <Form onSubmit={(e) => handleAddItemSubmit(e)}>
           <h1>Add Item Form</h1>
           <Form.Group>
             <Form.Label>Item name</Form.Label>
-            <Form.Control type="text" placeholder="My Item" />
+            <Form.Control type="text" name="name" />
           </Form.Group>
           <br />
           <Form.Group>
             <Form.Label>Item price</Form.Label>
-            <Form.Control type="text" placeholder="1.00" />
+            <Form.Control type="text" name="price" />
           </Form.Group>
           <br />
           <Form.Group>
             <Form.Label>Item count</Form.Label>
-            <Form.Control type="text" placeholder="5" />
+            <Form.Control type="text" name="count" />
           </Form.Group>
           <br />
-          <Button onClick={(e) => handleAddItemSubmit(e)}>Submit</Button>
+          <Button type="submit">Submit</Button>
         </Form>
       </div>
     );
@@ -179,13 +206,29 @@ export default function Admin() {
       <Modal.Header closeButton>
         <Modal.Title>Update Item</Modal.Title>
       </Modal.Header>
-      <Modal.Body>Woohoo, you are reading this text in a modal!</Modal.Body>
+      <Modal.Body>
+        <Form onSubmit={(e) => handleUpdateItemSubmit(e)}>
+          <Form.Group className="mb-3">
+            <Form.Label>Name</Form.Label>
+            <Form.Control type="textarea" name="name" />
+          </Form.Group>
+          <Form.Group className="mb-3">
+            <Form.Label>Price</Form.Label>
+            <Form.Control type="textarea" name="price" />
+          </Form.Group>
+          <Form.Group className="mb-3">
+            <Form.Label>Count</Form.Label>
+            <Form.Control type="textarea" name="count" />
+          </Form.Group>
+
+          <Button type="submit" variant="primary">
+            Update item
+          </Button>
+        </Form>
+      </Modal.Body>
       <Modal.Footer>
         <Button variant="secondary" onClick={handleClose}>
           Close
-        </Button>
-        <Button variant="primary" onClick={handleClose}>
-          Update item
         </Button>
       </Modal.Footer>
     </Modal>
