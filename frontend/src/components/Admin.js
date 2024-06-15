@@ -46,7 +46,7 @@ import { getItems, getItemsMock } from "../api-client/CommonClient";
 import {
   getOrders,
   getOrdersMock,
-  addItems,
+  addItem,
   updateItem,
   deleteItem,
 } from "../api-client/AdminClient";
@@ -55,47 +55,42 @@ export default function Admin() {
   const [itemDisplay, setItemDisplay] = useState([]);
   const [orderDisplay, setOrderDisplay] = useState([]);
   const itemToUpdateRef = useRef("");
-  const [shouldFetch, setShouldFetch] = useState(true);
   const [show, setShow] = useState(false);
 
   const fetchItems = async () => {
-    // const items = await getItems();
-    const items = await getItemsMock();
+    const items = await getItems();
 
     console.log(items);
     setItemDisplay(createItemDisplay(items));
   };
 
   const fetchOrders = async () => {
-    // const orders = await getOrders();
-    const orders = await getOrdersMock();
+    const orders = await getOrders();
     console.log(orders);
     setOrderDisplay(createOrderDisplay(orders));
   };
 
-  const createNewItems = async (items) => {
-    await addItems(items);
-    setShouldFetch(true);
+  const createNewItem = async (item) => {
+    await addItem(item);
+    await fetchItems();
+    await fetchOrders();
   };
 
   const updateSpecificItem = async (itemId, update) => {
     await updateItem(itemId, update);
-    setShouldFetch(true);
+    await fetchItems();
+    await fetchOrders();
   };
 
   const deleteSpecificItem = async (itemId) => {
     await deleteItem(itemId);
-    setShouldFetch(true);
+    await fetchItems();
+    await fetchOrders();
   };
   useEffect(() => {
-    if (shouldFetch) {
-      fetchItems();
-      fetchOrders();
-    }
-    return () => {
-      setShouldFetch(false);
-    };
-  }, [shouldFetch]);
+    fetchItems();
+    fetchOrders();
+  }, []);
 
   const handleUpdateButton = (e) => {
     itemToUpdateRef.current = e.target.value;
@@ -103,18 +98,24 @@ export default function Admin() {
   };
 
   const handleUpdateItemSubmit = (e) => {
-    e.preventDefault();
+    // e.preventDefault();
     const itemId = itemToUpdateRef.current;
     const formData = new FormData(e.target),
       formDataObj = Object.fromEntries(formData.entries());
-    const requestBody = { ...formDataObj, id: itemId };
-    console.log(requestBody);
-
+    const requestBody = {};
+    for (let key in formDataObj) {
+      if (formDataObj[key]) {
+        requestBody[key] = formDataObj[key];
+      }
+    }
+    updateSpecificItem(itemId, requestBody);
     setShow(false);
   };
 
   const handleDeleteButton = (e) => {
-    console.log(`item id to delete: ${e.target.value}`);
+    const itemId = e.target.value;
+    console.log(`item id to delete: ${itemId}`);
+    deleteSpecificItem(itemId);
   };
 
   const handleAddItemSubmit = (e) => {
@@ -122,6 +123,7 @@ export default function Admin() {
     const formData = new FormData(e.target),
       formDataObj = Object.fromEntries(formData.entries());
     console.log(formDataObj);
+    createNewItem(formDataObj);
   };
 
   const handleClose = () => setShow(false);

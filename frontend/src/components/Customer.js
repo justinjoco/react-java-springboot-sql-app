@@ -22,39 +22,32 @@ import {
   Button,
 } from "react-bootstrap";
 import { useState, useEffect, useRef } from "react";
-import { getItems, getItemsMock } from "../api-client/CommonClient";
-import {
-  getOrders,
-  getOrdersMock,
-  purchaseItems,
-} from "../api-client/CustomerClient";
-const userId = "myUserId";
+import { getItems } from "../api-client/CommonClient";
+import { getOrders, purchaseItems } from "../api-client/CustomerClient";
 export default function Customer() {
   const [itemDisplay, setItemDisplay] = useState([]);
   const [shoppingCart, setShoppingCart] = useState(createShoppingCart([]));
   const shoppingCartDataRef = useRef([]);
   const [orderDisplay, setOrderDisplay] = useState([]);
-  const [shouldFetch, setShouldFetch] = useState(true);
+  const userIdRef = useRef("");
 
   const fetchItems = async () => {
-    //const items = await getItems();
-    const items = await getItemsMock();
+    const items = await getItems();
     console.log(items);
     setItemDisplay(createItemDisplay(items));
   };
 
   const fetchOrders = async () => {
-    //const orders = await getOrders("myUserId");
-    const orders = await getOrdersMock();
+    const orders = await getOrders(userIdRef.current);
 
     console.log(orders);
     setOrderDisplay(createOrderDisplay(orders));
   };
 
   const makePurchase = async (items) => {
-    //const orders = await getOrders("myUserId");
-    await purchaseItems(userId, items);
-    setShouldFetch(true);
+    await purchaseItems(userIdRef.current, items);
+    await fetchItems();
+    await fetchOrders();
   };
 
   const handleAddToCartButtonClick = (event) => {
@@ -72,6 +65,7 @@ export default function Customer() {
     console.log(items);
     makePurchase(items);
     shoppingCartDataRef.current = [];
+    setShoppingCart(createShoppingCart([]));
   };
 
   function createItemDisplay(items) {
@@ -155,17 +149,26 @@ export default function Customer() {
   }
 
   useEffect(() => {
-    if (shouldFetch) {
-      fetchItems();
-      fetchOrders();
-    }
-    return () => {
-      setShouldFetch(false);
-    };
-  }, [shouldFetch]);
+    fetchItems();
+    fetchOrders();
+  }, []);
+
+  const handleUserIdTextAreaChange = (e) => {
+    userIdRef.current = e.target.value;
+    console.log(`${userIdRef.current}`);
+  };
+
+  const userIdTextArea = (
+    <textarea
+      onChange={(e) => {
+        handleUserIdTextAreaChange(e);
+      }}
+    ></textarea>
+  );
 
   return (
     <Container>
+      {userIdTextArea}
       {itemDisplay}
       {shoppingCart}
       {orderDisplay}

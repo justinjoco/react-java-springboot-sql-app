@@ -13,7 +13,7 @@ from decimal import Decimal
 class StoreService:
     def get_items(self):
         logger.info("Retrieving items from DB")
-        return Item.query.all()
+        return Item.query.where(Item.is_available == True).all()
 
     def get_item(self, item_id):
         logger.info(f"Retrieving item with id {item_id} from DB")
@@ -47,9 +47,9 @@ class StoreService:
         db.session.commit()
 
     def delete_item(self, item_id):
-        logger.info(f"Deleting item with id {item_id}")
+        logger.info(f"Soft deleting item with id {item_id}")
         item: Dict[str, any] | None = Item.query.get_or_404(item_id)
-        db.session.delete(item)
+        item.is_available = False
         db.session.commit()
 
     def purchase_specific_item(self, user_id, item_id, count):

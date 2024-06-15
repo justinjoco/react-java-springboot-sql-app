@@ -5,7 +5,7 @@ export async function getOrdersMock() {
 }
 
 export async function getOrders() {
-  const response = await fetch("http://localhost:5000/items", {
+  const response = await fetch("http://localhost:5000/orders", {
     method: "GET",
     headers: {
       "Content-Type": "application/json",
@@ -18,14 +18,14 @@ export async function getOrders() {
   return result;
 }
 
-export async function addItems(items) {
-  const response = await fetch("http://localhost:5000/items", {
+export async function addItem(item) {
+  const response = await fetch("http://localhost:5000/item", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
       role: "admin",
     },
-    body: JSON.stringify(items),
+    body: JSON.stringify(item),
   });
 
   const result = await response.text();
@@ -47,7 +47,7 @@ export async function updateItem(itemId, update) {
 }
 
 export async function deleteItem(itemId) {
-  const response = await fetch(`"http://localhost:5000/item/${itemId}"`, {
+  const response = await fetch(`http://localhost:5000/item/${itemId}`, {
     method: "DELETE",
     headers: {
       role: "admin",

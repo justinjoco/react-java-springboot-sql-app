@@ -41,4 +41,4 @@ def delete_item(item_id):
     if role is None or role != "admin":
         return "Not authorized", 401
     store_service.delete_item(item_id)
-    return "Item has been deleted", 200
+    return "Item has been soft deleted", 200

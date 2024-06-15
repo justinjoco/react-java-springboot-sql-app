@@ -15,6 +15,8 @@ class Item(db.Model):
     name: Mapped[str] = mapped_column(nullable=False)
     price: Mapped[Decimal] = mapped_column(nullable=False)
     count: Mapped[int] = mapped_column(nullable=False)
+    is_available: Mapped[bool] = mapped_column(nullable=False,
+                                               server_default=FetchedValue())
     date_created: Mapped[datetime] = mapped_column(
         nullable=False,
         server_default=FetchedValue())
