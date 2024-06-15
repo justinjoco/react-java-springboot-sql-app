@@ -60,13 +60,11 @@ export default function Admin() {
   const fetchItems = async () => {
     const items = await getItems();
 
-    console.log(items);
     setItemDisplay(createItemDisplay(items));
   };
 
   const fetchOrders = async () => {
     const orders = await getOrders();
-    console.log(orders);
     setOrderDisplay(createOrderDisplay(orders));
   };
 
@@ -114,7 +112,6 @@ export default function Admin() {
 
   const handleDeleteButton = (e) => {
     const itemId = e.target.value;
-    console.log(`item id to delete: ${itemId}`);
     deleteSpecificItem(itemId);
   };
 
@@ -122,7 +119,6 @@ export default function Admin() {
     e.preventDefault();
     const formData = new FormData(e.target),
       formDataObj = Object.fromEntries(formData.entries());
-    console.log(formDataObj);
     createNewItem(formDataObj);
   };
 
@@ -253,7 +249,6 @@ function createOrderDisplay(orders) {
 
     const itemOrderBody = itemOrders.map((itemOrder, index) => {
       let orderRow = null;
-      console.log(index);
       if (index === 0) {
         orderRow = (
           <>

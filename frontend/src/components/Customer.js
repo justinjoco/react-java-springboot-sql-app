@@ -33,14 +33,12 @@ export default function Customer() {
 
   const fetchItems = async () => {
     const items = await getItems();
-    console.log(items);
     setItemDisplay(createItemDisplay(items));
   };
 
   const fetchOrders = async () => {
     const orders = await getOrders(userIdRef.current);
 
-    console.log(orders);
     setOrderDisplay(createOrderDisplay(orders));
   };
 
@@ -53,7 +51,6 @@ export default function Customer() {
   const handleAddToCartButtonClick = (event) => {
     let shoppingCartData = shoppingCartDataRef.current;
     const item = JSON.parse(event.target.value);
-    console.log(item);
     shoppingCartData.push(item);
     const cart = createShoppingCart(shoppingCartData);
     setShoppingCart(cart);
@@ -62,7 +59,6 @@ export default function Customer() {
 
   const handleShoppingCartSubmit = () => {
     const items = shoppingCartDataRef.current;
-    console.log(items);
     makePurchase(items);
     shoppingCartDataRef.current = [];
     setShoppingCart(createShoppingCart([]));
@@ -155,7 +151,6 @@ export default function Customer() {
 
   const handleUserIdTextAreaChange = (e) => {
     userIdRef.current = e.target.value;
-    console.log(`${userIdRef.current}`);
   };
 
   const userIdTextArea = (
@@ -183,7 +178,6 @@ function createOrderDisplay(orders) {
 
     const itemOrderBody = itemOrders.map((itemOrder, index) => {
       let orderRow = null;
-      console.log(index);
       if (index === 0) {
         orderRow = (
           <>
