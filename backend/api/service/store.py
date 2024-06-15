@@ -8,6 +8,7 @@ from sqlalchemy import insert, update, select
 from typing import Dict
 from flask import abort
 from decimal import Decimal
+from datetime import datetime
 
 
 class StoreService:
@@ -41,6 +42,7 @@ class StoreService:
     def update_item(self, item_id, item_update):
         logger.info(f"Updating item with id {item_id}")
         Item.query.get_or_404(item_id)
+        item_update["date_updated"] = datetime.now()
         update_stmt = update(Item).where(Item.id == item_id).values(
             item_update)
         db.session.execute(update_stmt)
@@ -49,6 +51,7 @@ class StoreService:
     def delete_item(self, item_id):
         logger.info(f"Soft deleting item with id {item_id}")
         item: Dict[str, any] | None = Item.query.get_or_404(item_id)
+        item.date_updated = datetime.now()
         item.is_available = False
         db.session.commit()
 
@@ -75,6 +78,7 @@ class StoreService:
                 400,
                 description="There's not enough inventory of the given item")
         item.count = new_count
+        item.date_updated = datetime.now()
         db.session.flush()
         item_order = ItemOrder(order_id=order_id,
                                item_id=item_id,
