@@ -96,7 +96,6 @@ export default function Admin() {
   };
 
   const handleUpdateItemSubmit = (e) => {
-    // e.preventDefault();
     const itemId = itemToUpdateRef.current;
     const formData = new FormData(e.target),
       formDataObj = Object.fromEntries(formData.entries());
